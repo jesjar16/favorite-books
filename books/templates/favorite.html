@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorite{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <div class="col-10">
+                <h3>Welcome, {{ request.session.user_data.first_name }} {{ request.session.user_data.last_name }}!</h3>
+                <hr>
+            </div>
+        </div>
+        <div class="row py-3 ps-5">
+            <!-- Book Edit Form, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>My Favorite Books</h4>
+                </div>
+                {% for liked in liked_by_this_user %}
+                    <div class="row mb-3 border-bottom pb-3">
+                        <h6>{{ liked.title }}</h6>
+                        <p>Added on: {{ liked.created_at }}</p>
+                        <p>Description: {{ liked.desc }}</p>
+                        <a href="{% url 'my_unfavorite' book_id=liked.id source='all_favs' %}">Un-Favorite</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}    

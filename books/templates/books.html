@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}All Books{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <h3>Welcome, {{ request.session.user_data.first_name }} {{ request.session.user_data.last_name }}!</h3>
+            <hr>
+            <!-- Add a Favorite Book, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>Add a Favorite Book</h4>
+                </div>
+                <form id="book_form" name="book_form" action="{% url 'my_add_book' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="title" class="form-label">Title</label>
+                        </div>
+                        <div class="col-9">
+                            <input type="text" class="form-control" id="title" name="title" value="{{ request.session.form_data.title }}">
+                        </div>
+                    </div>                        
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="description" class="form-label">Description</label>
+                        </div>
+                        <div class="col-9">
+                            <textarea class="form-control" id="description" name="description">{{ request.session.form_data.desc }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-4 text-end">
+                        <div class="col-4 offset-8">
+                            <button type="submit" class="btn btn-dark">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>All Books</h4>
+                    <!-- Displays All Books, right side-->
+                    {% if all_books %}
+                        {% for book in all_books %}
+                            <!-- Book Detail-->
+                            <div class="row pb-4">
+                                {% if book in uploaded_by_this_user %}
+                                    <a href="{% url 'my_edit' book_id=book.id %}">
+                                {% else %}        
+                                    <a href="{% url 'my_view' book_id=book.id  %}">
+                                {% endif %}
+                                {{ book.title }}</a>
+                                
+                                <p>added by {{ book.uploaded_by.first_name|capfirst }} {{ book.uploaded_by.last_name|capfirst }}</p>
+                                {% if book in liked_by_this_user %}
+                                    <i>this is one of your favorites</i>
+                                {% else %}
+                                    <a href="{% url 'my_favorite' book_id=book.id source='books' %}">Add to Favorites</a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %} <!-- No books added so far-->
+                        <div class="row pb-4">
+                            <p>No books added so far... Be the first to add a book!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}    

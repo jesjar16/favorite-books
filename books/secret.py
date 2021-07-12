@@ -1,0 +1,1 @@
+myDjangoKey = 'django-insecure-os2m#2_e=u@og-&6wm7!zm2@=7=$5l5m!%u#ic&_5vrq-6q6(l'

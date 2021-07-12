@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Book{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <script>
+        $( document ).ready(function() {
+            console.log( "ready!" );
+
+            $("#book_form #update_btn").click(function (ev) {
+                ev.preventDefault()
+                // setting the action when the update button is clicked
+                $("#book_form").attr("action", "{% url 'my_update' book_id=this_book.id %}")
+                $("#book_form").submit();
+            });
+
+            //$("#book_form #delete_btn").click(function (ev) {
+            //    ev.preventDefault()
+                // setting the action when the delete button is clicked
+            //    $("#book_form").attr("action", "{% url 'my_delete' book_id=this_book.id %}")
+            //    $("#book_form").submit();
+            //});
+
+            // actions on delete button for book
+            $(document).on("click", "#delete_btn", function () {
+                $('#deleteBookModal').modal('show');                
+            });
+
+        });
+    </script>
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <div class="col-10">
+                <h3>Welcome, {{ request.session.user_data.first_name }} {{ request.session.user_data.last_name }}!</h3>
+                <hr>
+            </div>
+        </div>
+        <div class="row py-3 ps-5">
+            <!-- Book Edit Form, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <form id="book_form" name="book_form" action="hol" method="POST">
+                    {% csrf_token %}
+                    <div class="row pb-4">
+                        <div class="col-12">
+                            <input type="text" class="form-control" id="title" name="title" value="{{ request.session.form_data.title }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <p>Added by: {{ this_book.uploaded_by.first_name|capfirst }} {{ this_book.uploaded_by.last_name|capfirst }} </p>
+                        <p>Added on: {{ this_book.created_at }} </p>
+                        <p>Last Updated on: {{ this_book.updated_at }}</p>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <label for="description" class="form-label">Description</label>
+                        </div>
+                        <div class="col-9">
+                            <textarea class="form-control" id="description" name="description">{{ request.session.form_data.desc }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-4 text-end">
+                        <div class="col-4 offset-4">
+                            <button type="submit" id="update_btn" class="btn btn-success">Update</button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" id="delete_btn" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Displays Users who Like this Book, right side-->
+            <div class="col-6 pt-3 pb-5 ps-5">
+                <div class="row pb-4">
+                    <h4>Users Who Like This Book</h4>
+                    <div class="row">
+                        {% if users_who_like %}
+                            <ul>
+                                {% for user in users_who_like %}
+                                    <li>{{ user.first_name|capfirst }} {{ user.last_name|capfirst }} 
+                                        {% if user.id == request.session.user_data.user_id %}
+                                            <a href="{% url 'my_unfavorite' book_id=this_book.id source='edit' %}">Un-Favorite</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No user has marked this book as their favorite</p>
+                        {% endif %}
+                        {% if this_user not in users_who_like %}
+                            <a href="{% url 'my_favorite' book_id=this_book.id source='edit' %}">Add to Favorites</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Book Modal -->
+    <div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Are you sure you want to delete the following book?</h5>
+                <p>{{ this_book.title}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <form id="delete_book_form" action="{% url 'my_delete' book_id=this_book.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="message_id" name="message_id" value="">
+                    <button type="submit" id="confirm_delete_btn" class="btn btn-danger">Yes! I want to delete this!</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}    

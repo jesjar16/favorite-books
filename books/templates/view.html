@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}View Book{% endblock %}
+
+{% block content %}
+    {% include "menu.html" %}
+    <div class="row">
+        <div class="row py-3 ps-5">
+            <div class="col-10">
+                <h3>Welcome, {{ request.session.user_data.first_name }} {{ request.session.user_data.last_name }}!</h3>
+                <hr>
+            </div>
+        </div>
+        <div class="row py-3 ps-5">
+            <!-- Book Edit Form, left side-->
+            <div class="col-6 pt-3 pb-5">
+                <div class="row pb-4">
+                    <h4>{{ this_book.title }}</h4>
+                </div>
+                <div class="row mb-3">
+                    <p>Added by: {{ this_book.uploaded_by.first_name|capfirst }} {{ this_book.uploaded_by.last_name|capfirst }}</p>
+                    <p>Added on: {{ this_book.created_at }}</p>
+                    <p>Last Updated on: {{ this_book.updated_at }}</p>
+                    <p>Description: {{ this_book.desc }}</p>
+                </div>
+            </div>
+
+            <!-- Displays Users who Like this Book, right side-->
+            <div class="col-6 pt-3 pb-5 ps-5">
+                <div class="row pb-4">
+                    <h4>Users Who Like This Book</h4>
+                    <div class="row">
+                        {% if users_who_like %}
+                            <ul>
+                                {% for user in users_who_like %}
+                                    <li>{{ user.first_name|capfirst }} {{ user.last_name|capfirst }} 
+                                        {% if user.id == request.session.user_data.user_id %}
+                                            <a href="{% url 'my_unfavorite' book_id=this_book.id source='view' %}">Un-Favorite</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No user has marked this book as their favorite</p>
+                        {% endif %}
+                        {% if this_user not in users_who_like %}
+                            <a href="{% url 'my_favorite' book_id=this_book.id source='view' %}">Add to Favorites</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}    
