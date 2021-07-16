@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from books.models import User, Message, Comment, Book
+from books.models import User, Book
 from django.contrib import messages
 import bcrypt
 from django.db import IntegrityError

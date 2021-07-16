@@ -1,7 +1,8 @@
-from books.models import User, Message, Comment, Book
-from django.http.response import HttpResponse, JsonResponse
+from books.models import User, Book
+from django.http.response import JsonResponse
 from books.decorators import login_required
 
+@login_required
 def add_book_ajax(request):
     print("EN ajax")
     print(request.POST)

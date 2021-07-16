@@ -14,7 +14,7 @@ class UserManager(models.Manager):
         if len(postData['first_name']) == 0:
             errors['first_name_emp'] = "First name can not be empty"
         elif len(postData['first_name']) > 0 and len(postData['first_name']) < 2:
-            errors['show_title_len'] = "First name should be less at least 2 characters long"
+            errors['first_name_len'] = "First name should be less at least 2 characters long"
             
         # checking last name
         if len(postData['last_name']) == 0:
@@ -108,52 +108,6 @@ class User(models.Model):
 
     def __repr__(self):
         return f"User: (ID: {self.id}) -> {self.first_name} {self.last_name} by {self.email}"
-    
-class MessageManager(models.Manager):
-    def basic_validator(self, postData):
-
-        # errors dictionnary
-        errors = {}
-        
-        # checking first name
-        if len(postData['message']) == 0:
-            errors['message'] = "Message can not be empty"
-            
-        return errors
-                
-    
-class Message(models.Model):
-    message = models.TextField(default="None")
-    user_id = models.ForeignKey(User, related_name="messages", on_delete = models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    objects = MessageManager()
-
-    def __repr__(self):
-        return f"Message: (ID: {self.id}) -> {self.user_id} {self.message}"
-    
-class CommentManager(models.Manager):
-    def basic_validator(self, postData):
-
-        # errors dictionnary
-        errors = {}
-        
-        # checking first name
-        if len(postData['comment']) == 0:
-            errors['comment'] = "Comment can not be empty"
-            
-        return errors
-    
-class Comment(models.Model):
-    message_id = models.ForeignKey(Message, related_name="messages", on_delete = models.CASCADE)
-    user_id = models.ForeignKey(User, related_name="comments", on_delete = models.CASCADE)
-    comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    objects = CommentManager()
-
-    def __repr__(self):
-        return f"Comment: (ID: {self.id}) -> {self.comment}"    
 
 # new models for books app
 
