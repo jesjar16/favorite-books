@@ -40,10 +40,11 @@
             </div>
             
             <div class="col-6 pt-3 pb-5">
-                <div class="row pb-4">
+                <div class="row pb-4" >
                     <h4>All Books</h4>
-                    <!-- Displays All Books, right side-->
-                    {% if all_books %}
+                    <div id="books_list">
+                        <!-- Displays All Books, right side-->
+                        {% if all_books %}
                         {% for book in all_books %}
                             <!-- Book Detail-->
                             <div class="row pb-4">
@@ -62,13 +63,49 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
-                    {% else %} <!-- No books added so far-->
+                        {% else %} <!-- No books added so far-->
                         <div class="row pb-4">
                             <p>No books added so far... Be the first to add a book!</p>
                         </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+<script>
+    // conenbtar el sgte bloque para funcionamiento tradicional
+    $('#book_form').on('submit', function(ev) {
+        ev.preventDefault();
+        console.log($(this).serialize());
+        $.ajax({
+            url: "{% url 'my_add_book_ajax' %}",
+            method: 'post',
+            data: $(this).serialize(),
+            success: function(data){
+                console.log(data);
+                $('#books_list').prepend(`
+                    <div class="row pb-4">                        
+                        <a href="/books/${data.id}/edit/">${data.title}</a>
+                        <p>added by ${data.uploader}</p>
+                        <i>this is one of your favorites</i>
+                    </div>
+                `);
+                // avisarle sl usuario
+                toastr.success("Book has been added successfully");
+                // limpiar los campos del formulario
+                $('#title').val("")
+                $('#description').val("")
+            },
+            error: function(data) {
+                console.log(data);
+                console.log(data.responseJSON.errors);
+                for (error of data.responseJSON.errors) {
+                    toastr.error(error);
+                }
+            }
+        })
+    })
+</script>    
 {% endblock %}    

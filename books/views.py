@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from books.models import User, Message, Comment, Book
@@ -139,7 +139,7 @@ def homepage(request):
 @login_required    
 def books(request):
     # retrieving books
-    all_books = Book.objects.all()
+    all_books = Book.objects.all().order_by('-id')
     
     # retrieving current logged in user
     this_user = User.objects.get(id=request.session['user_data']['user_id'])
@@ -208,6 +208,8 @@ def add_book(request):
             del request.session['form_data']
 
         return redirect(reverse("my_books"))
+
+                
 
 @login_required    
 def favorite(request, book_id, source):
@@ -364,7 +366,7 @@ def all_favs(request):
     id = request.session['user_data']['user_id']
     this_user = User.objects.get(id=id)
     
-    liked_by_this_user = this_user.liked_books.all() 
+    liked_by_this_user = this_user.liked_books.all().order_by('-id') 
 
     context = {
         'liked_by_this_user': liked_by_this_user

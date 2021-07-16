@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from . import views_ajax
+
 urlpatterns = [
     path('', views.index, name="my_index"),
     path('success/', views.success, name="my_success"),
@@ -8,6 +10,7 @@ urlpatterns = [
     path('homepage/', views.homepage, name="my_homepage"),
     path('books/', views.books, name="my_books"),
     path('books/add_book', views.add_book, name="my_add_book"),
+    path('books/add_book_ajax', views_ajax.add_book_ajax, name="my_add_book_ajax"),
     path('books/<int:book_id>/edit/', views.edit, name="my_edit"),
     path('books/<int:book_id>/update/', views.update, name="my_update"),
     path('books/<int:book_id>/delete/', views.delete, name="my_delete"),
